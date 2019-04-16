@@ -42,7 +42,6 @@ def create_composite_image(tiles, bbox, dims):
             (tile['bbox'].min.x - bbox.min.x) / bbox.width * width)
         offset_y = round(
             -(tile['bbox'].max.y - bbox.max.y) / bbox.height * height)
-        print(offset_x, offset_y)
         composite_img.paste(tile['img'], (offset_x, offset_y))
     return composite_img
 
@@ -146,6 +145,5 @@ def mask_pixels_outside_boundary(cropped_to_boundary_image,
     masked_raw[:, :, 1] = mask_raw * cropped_to_bbox_raw[:, :, 1]
     masked_raw[:, :, 2] = mask_raw * cropped_to_bbox_raw[:, :, 2]
     masked_raw[:, :, 3] = mask_raw * 255
-    np.set_printoptions(threshold=np.inf)
     masked_image = Image.fromarray(masked_raw, 'RGBA')
     return masked_image

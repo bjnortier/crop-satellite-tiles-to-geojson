@@ -21,33 +21,48 @@ tiles = [
     }
 ]
 
-# 1. Calculate the composite bounding box and dimensions:
-(composite_bbox, composite_dims) = calculate_composite_bbox_and_dimensions(
-    tiles)
-print('composite image bounding box:', composite_bbox)
-print('composite image dimensions:', composite_dims)
 
-# 2. Create a simple composite image:
-composite_img = create_composite_image(tiles, composite_bbox, composite_dims)
-composite_img.save('./output/composite.png')
+def run_once(write_outputs=True):
+    # 1. Calculate the composite bounding box and dimensions:
+    (composite_bbox, composite_dims) = calculate_composite_bbox_and_dimensions(
+        tiles)
+    if write_outputs:
+        print('composite image bounding box:', composite_bbox)
+        print('composite image dimensions:', composite_dims)
 
-# 3. Crop it to the GeoJSON boundary boundingbox
-with open('./input/knp_boundary.geojson', 'r') as f:
-    knp = json.load(f)
-coordinates = knp['features'][0]['geometry']['coordinates'][0]
-(cropped_to_boundary_image, cropped_bbox) = crop_to_boundary(
-    coordinates,
-    composite_img,
-    composite_bbox)
-cropped_to_boundary_image.save('./output/cropped_to_boundary.png')
-print('cropped to boundary size: {0}'.format(cropped_to_boundary_image.size))
-print('cropped to boundary bbox: \n\t{0}\n\t{1}'.format(
-    cropped_bbox.min,
-    cropped_bbox.max))
+    # 2. Create a simple composite image:
+    composite_img = create_composite_image(
+        tiles,
+        composite_bbox,
+        composite_dims)
+    if write_outputs:
+        composite_img.save('./output/composite.png')
 
-# 4. Remove pixels outside boundary
-masked_image = mask_pixels_outside_boundary(
-    cropped_to_boundary_image,
-    coordinates,
-    cropped_bbox)
-masked_image.save('./output/masked_to_boundary.png')
+    # 3. Crop it to the GeoJSON boundary boundingbox
+    with open('./input/knp_boundary.geojson', 'r') as f:
+        knp = json.load(f)
+    coordinates = knp['features'][0]['geometry']['coordinates'][0]
+    (cropped_to_boundary_image, cropped_bbox) = crop_to_boundary(
+        coordinates,
+        composite_img,
+        composite_bbox)
+    if write_outputs:
+        cropped_to_boundary_image.save('./output/cropped_to_boundary.png')
+        print('cropped to boundary size: {0}'.format(
+            cropped_to_boundary_image.size))
+        print('cropped to boundary bbox: \n\t{0}\n\t{1}'.format(
+            cropped_bbox.min,
+            cropped_bbox.max))
+
+    # 4. Remove pixels outside boundary
+    masked_image = mask_pixels_outside_boundary(
+        cropped_to_boundary_image,
+        coordinates,
+        cropped_bbox)
+    if write_outputs:
+        masked_image.save('./output/masked_to_boundary.png')
+    return masked_image
+
+
+if __name__ == '__main__':
+    run_once()
