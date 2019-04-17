@@ -138,12 +138,12 @@ def mask_pixels_outside_boundary(cropped_to_boundary_image,
     mask_raw = np.array(mask_image)
 
     cropped_to_bbox_raw = np.asarray(cropped_to_boundary_image)
-    masked_raw = np.empty(cropped_to_bbox_raw.shape, dtype='uint8')
+    result_raw = np.empty(cropped_to_bbox_raw.shape, dtype='uint8')
     # Mask all channels to reduce file size.
     # How to do RGB in one step?
-    masked_raw[:, :, 0] = mask_raw * cropped_to_bbox_raw[:, :, 0]
-    masked_raw[:, :, 1] = mask_raw * cropped_to_bbox_raw[:, :, 1]
-    masked_raw[:, :, 2] = mask_raw * cropped_to_bbox_raw[:, :, 2]
-    masked_raw[:, :, 3] = mask_raw * 255
-    masked_image = Image.fromarray(masked_raw, 'RGBA')
-    return masked_image
+    result_raw[:, :, 0] = mask_raw * cropped_to_bbox_raw[:, :, 0]
+    result_raw[:, :, 1] = mask_raw * cropped_to_bbox_raw[:, :, 1]
+    result_raw[:, :, 2] = mask_raw * cropped_to_bbox_raw[:, :, 2]
+    result_raw[:, :, 3] = mask_raw * 255
+    result_image = Image.fromarray(result_raw, 'RGBA')
+    return result_image
